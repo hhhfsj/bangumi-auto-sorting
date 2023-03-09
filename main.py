@@ -53,7 +53,7 @@ def file_decoding(filename: str) -> dict:
         filename = filename[filename.find("]") + 1:]
     output = {
         "FileName": video_filename,
-        "bangumi_name": bangumi_name_cut[0],
+        "bangumi_name": bangumi_name[:bangumi_name.find(" - ")],
         "season": bangumi_season,
         "episode": bangumi_name_cut[-1],
         "tags": temp_list,

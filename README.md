@@ -1,5 +1,6 @@
 # bangumi-auto-sorting
 将ANi的流媒体镜像自动分类为jellyfin可识别的目录树
+ANi文件名格式：[ANi] 番剧名（僅限港澳台地區） - 01 [1080P][平台][WEB-DL][AAC AVC][CHT CHS].mp4
 
 ``` dir tree
 动画

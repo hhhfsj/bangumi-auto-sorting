@@ -1,0 +1,19 @@
+{
+    "debug": true,
+    "Input-Output_Config":{
+        "1": {
+            "input_dir": "input",
+            "output_dir": "output",
+            "Season_add_zero": false,
+            "Copy_mode": true,
+            "Del_original_file": false
+        },
+        "2": {
+            "input_dir": "input",
+            "output_dir": "output",
+            "Season_add_zero": false,
+            "Copy_mode": true,
+            "Del_original_file": false
+        }
+    }
+}

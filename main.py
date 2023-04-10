@@ -3,30 +3,18 @@ import os
 import shutil
 import hashlib
 import time
+import json
 from pathlib import Path
 from sys import stderr
 
 from loguru import logger
 from datetime import datetime
 
-config = {
-    1: {
-        "input_dir": "input",
-        "output_dir": "output",
-        "Season_add_zero": False,  # 是否在季度编号为1时给季度加0（老问题了）
-        "Copy_mode": True,  # 是否使用复制模式
-        "Del_original_file": False  # （在复制模式下启用）是否删除已复制完成的原文件
-    },
-    2: {
-        "input_dir": "input",
-        "output_dir": "output",
-        "Season_add_zero": False,  # 是否在季度编号为1时给季度加0（老问题了）
-        "Copy_mode": True,  # 是否使用复制模式
-        "Del_original_file": False  # （在复制模式下启用）是否删除已复制完成的原文件
-    }
-}
+with open('./config.json', 'r+') as config_json_file:
+    config_all = json.load(config_json_file)
 
-debug = True  # 是否启用debug输出
+config = config_all['Input-Output_Config']
+debug = config_all['debug']
 
 # 检查是否存在logs文件夹
 logs = os.path.join('logs')

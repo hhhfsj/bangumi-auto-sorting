@@ -2,16 +2,43 @@ import re
 import os
 import shutil
 import hashlib
-import time
-import json
+from time import sleep
+from json import load, dump
 from pathlib import Path
 from sys import stderr
 
 from loguru import logger
 from datetime import datetime
 
+default_config = {
+    "sleep_time": 30,
+    "debug": True,
+    "Input-Output_Config": {
+        "1": {
+            "input_dir": "input",
+            "output_dir": "output",
+            "Season_add_zero": False,
+            "Copy_mode": True,
+            "Del_original_file": False
+        },
+        "2": {
+            "input_dir": "input",
+            "output_dir": "output",
+            "Season_add_zero": False,
+            "Copy_mode": True,
+            "Del_original_file": False
+        }
+    }
+}
+
+if not os.path.exists('./config.json'):
+    dump(default_config, open("./config.json", 'w'), indent='\t', ensure_ascii=False)
+    print("配置文件已生成，请配置完后重新启动")
+    os.system('pause')
+    exit()
+
 with open('./config.json', 'r+') as config_json_file:
-    config_all = json.load(config_json_file)
+    config_all = load(config_json_file)
 
 config = config_all['Input-Output_Config']
 debug = config_all['debug']
@@ -258,10 +285,10 @@ def run():
 
         # 检测输入输出文件夹是否存在
         if not os.path.exists(input_dir):
-            logger.error(f"输入文件夹{input_dir}不存在")
-            exit()
+            logger.error(f"[{index}]输入文件夹{input_dir}不存在，已跳过")
+            continue
         if not os.path.exists(output_dir):
-            logger.info(f"输出文件夹{output_dir}不存在，已自动创建")
+            logger.info(f"[{index}]输出文件夹{output_dir}不存在，已自动创建")
             mkdir(output_dir)
 
         # 检测是否有文件
@@ -323,4 +350,4 @@ def run():
 if __name__ == "__main__":
     while True:
         run()
-        time.sleep(15)
+        sleep(config_all['sleep_time'])

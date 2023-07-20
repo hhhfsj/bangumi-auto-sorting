@@ -1,6 +1,8 @@
 # bangumi-auto-sorting
 将RSS下载的番剧自动分类为jellyfin可识别的目录树  
 
+![image](https://github.com/hhhfsj/bangumi-auto-sorting/assets/47785500/89566169-053d-45d5-81f5-5da0c2f44b02)
+
 ``` dir tree
 动画
 ├── 狼与香辛料

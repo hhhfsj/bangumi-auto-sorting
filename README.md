@@ -16,18 +16,28 @@ ANi文件名格式：[ANi] 番剧名（僅限港澳台地區） - 01 [1080P][平
 └── ……
 ```
 
-请按需修改main.py内容后运行
-``` python
-config = {
-    1: {  # 配置文件序号
-        "input_dir": "H:\Baha",  # 输入目录
-        "output_dir": "H:\Baha",  # 输出目录
-        "Season_add_zero": False  # 是否在季度编号为1时给季度加0（老问题了）
-    },
-    2: {
-        "input_dir": "H:\Bilibili",
-        "output_dir": "H:\Bilibili",
-        "Season_add_zero": True
-    }
+请按需修改config.json内容后运行
+``` json
+{
+	"sleep_time": 30, //等待时间（秒）
+	"debug": true, //调试模式
+	"Configs": [ //配置列表
+		{
+			"Model": "File_name", // 获取方式（可选：File_name|Anitomy）
+			"input_dir": "input", // 输入文件夹
+			"output_dir": "output", // 输出文件夹
+			"Season_add_zero": false, // 是否给1加0
+			"Copy_model": true, // 是否启用复制模式
+			"Del_original_file": false // 是否删除源文件（仅复制模式）
+		},
+		{
+			"Model": "Anitomy",
+			"input_dir": "input",
+			"output_dir": "output",
+			"Season_add_zero": false,
+			"Copy_model": true,
+			"Del_original_file": false
+		}
+	]
 }
 ```

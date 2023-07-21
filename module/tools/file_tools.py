@@ -21,7 +21,7 @@ def Compare_file_md5(file1: str, file2: str) -> bool:
 
 def is_used(file_name):
     try:
-        with open(file_name, 'w') as f:
+        with open(file_name, 'rb+') as f:
             return True  # File is not locked
     except IOError:
         return False  # File is locked

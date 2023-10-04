@@ -11,6 +11,7 @@ def file_decoding(filename: str):
             del bangumi_name_cut[index]
 
     def analyze_season(bangumi_name: str) -> str:
+        # logger.debug(bangumi_name)
         Digital_mapping: dict = {
             "零": 0,
             "一": 1,
@@ -26,6 +27,7 @@ def file_decoding(filename: str):
         }
         bangumi_season = "1"
         bangumi_name = bangumi_name.lower()
+        # logger.debug(bangumi_name)
 
         if "季" in bangumi_name:
             if re.search("第\D季", bangumi_name):
@@ -36,7 +38,7 @@ def file_decoding(filename: str):
             elif re.search("第\d季", bangumi_name):
                 bangumi_season: str = re.match("第\d季", bangumi_name).group()[1:-1]
         elif 'season' in bangumi_name:
-            bangumi_season: str = re.match("season \d", bangumi_name).group()
+            bangumi_season: str = re.findall(r'\d+', bangumi_name)[0]
         elif re.search('[!|！]{2,}', bangumi_name):
             temp = re.match('[!|！]{2,}', bangumi_name).group()
             bangumi_season = str(len(temp))
@@ -48,6 +50,7 @@ def file_decoding(filename: str):
         elif re.search(' \d*$', bangumi_name):
             bangumi_season = re.match(' \d*$', bangumi_name).group()[1:]
 
+        # logger.debug(bangumi_season)
         return bangumi_season
 
     def cut_tags(filename) -> list:
@@ -64,7 +67,7 @@ def file_decoding(filename: str):
 
     def del_season_words(bangumi_name: str):
         bangumi_name = bangumi_name.lower()
-        words_list = [r'season \d', r'第[\d|\D]季', r'[!|！]{2,}', '\dnd Attack', '\dnd']
+        words_list = [r'season\d ' ,r'season \d', r'第[\d|\D]季', r'[!|！]{2,}', '\dnd Attack', '\dnd']
         for key in words_list:
             bangumi_name = re.sub(key, "", bangumi_name)
         temp = True

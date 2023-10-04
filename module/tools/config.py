@@ -26,14 +26,14 @@ default_config = {
 }
 
 if not os.path.exists('./config.json'):
-    dump(default_config, open("./config.json", 'w'), indent='\t', ensure_ascii=False)
+    dump(default_config, open("./config.json", 'w',encoding="utf-8"), indent='\t', ensure_ascii=False)
     print("配置文件已生成，请配置完后重新启动")
     os.system('pause')
     exit()
 
-with open('./config.json', 'r+') as config_json_file:
+with open('./config.json', 'r+',encoding="utf-8") as config_json_file:
     config_all = load(config_json_file)
-    print(config_all)
+    # print(config_all)
 
 config = config_all['Configs']
 debug = config_all['debug']

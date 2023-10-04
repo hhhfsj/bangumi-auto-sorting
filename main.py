@@ -8,7 +8,6 @@ from module.tools.file_tools import *
 from module.tools.logger import logger
 
 
-
 def run():
     # 循环配置文件
     for config_item in config:
@@ -49,25 +48,38 @@ def run():
 
             filename = str(filename.name)
 
+            if is_used(os.path.join(input_dir, filename)):
+                continue
+
             # 判断数据源
             if model == 'File_name':
-                result = file_decoding(filename)
-                if not result:
-                    logger.debug(filename, "已跳过")
+                try:
+                    result = file_decoding(filename)
+                except Exception as err:
+                    logger.error(f"[Mode:File_name]文件：{filename}解析错误\n{err}")
                     continue
-                season = result['season']
-                episode = result['episode']
-                bangumi_name = result['bangumi_name']
-                fileName = result['FileName']
+                else:
+                    if not result:
+                        logger.debug(filename, "已跳过")
+                        continue
+                    season = result['season']
+                    episode = result['episode']
+                    bangumi_name = result['bangumi_name']
+                    fileName = result['FileName']
             elif model == 'Anitomy':
-                result = Anitomy(filename)
-                if not result:
-                    logger.debug(filename, "已跳过")
+                try:
+                    result = Anitomy(filename)
+                except Exception as err:
+                    logger.error(f"[Mode:Anitomy]文件：{filename}解析错误\n{err}")
                     continue
-                season = "1"
-                episode = result['episode_number']
-                bangumi_name = result['anime_title']
-                fileName = result['file_name']
+                else:
+                    if not result:
+                        logger.debug(filename, "已跳过")
+                        continue
+                    season = "1"
+                    episode = result['episode_number']
+                    bangumi_name = result['anime_title']
+                    fileName = result['file_name']
             else:
                 break
 
@@ -83,11 +95,6 @@ def run():
             if not os.path.exists(outputfile_path):
                 mkdir(outputfile_path)
             if os.path.exists(output_bangumi_dir) and os.path.exists(outputfile_path):
-                # InputFile_Path = f"{input_dir}/{fileName}"  # 输入文件
-                # OutputFile_path = f"{output_dir}/{bangumi_name}/S{season}"  # 包含季度的文件路径
-                # Out_dir_Original_File_Name = f"{OutputFile_path}/{fileName}"  # 包含季度的原文件名
-                # Final_Out_file_name = f"{OutputFile_path}/S{season}E{episode} {fileName}"  # 最终的文件名
-
                 InputFile_Path = os.path.join(input_dir, fileName)  # 输入文件
                 Out_dir_Original_File_Name = os.path.join(outputfile_path, fileName)  # 包含季度的原文件名
                 if episode == 'null':
@@ -104,25 +111,34 @@ def run():
                     del_file(Out_dir_Original_File_Name)
                 # 在复制模式下启用；判断目标文件夹内是否已经有完整的文件，如果有了需尝试删除输入文件夹内的文件
                 if copy and os.path.exists(Final_Out_file_name) and del_input_file:
-                    if Compare_file_md5(InputFile_Path, Final_Out_file_name):
-                        if is_used(InputFile_Path):
-                            del_file(InputFile_Path)
-                    else:
-                        logger.info("文件MD5校验失败，尝试重新复制")
-                        if del_file(Final_Out_file_name):
-                            copy_file(InputFile_Path, outputfile_path)
-                            rename_file(Out_dir_Original_File_Name, Final_Out_file_name)
+                    if not is_used(InputFile_Path) and not is_used(Final_Out_file_name):  # 检测文件是否被占用
+                        if Compare_file_md5(InputFile_Path, Final_Out_file_name):  # 校验MD5
+                            if not is_used(InputFile_Path):  # 检查输入文件是否被占用
+                                del_file(InputFile_Path)
+                                logger.warning(InputFile_Path+"已删除")
+                        else:
+                            logger.warning("文件MD5校验失败，尝试重新复制")
+                            if del_file(Final_Out_file_name):
+                                copy_file(InputFile_Path, outputfile_path)
+                                rename_file(Out_dir_Original_File_Name, Final_Out_file_name)
+                                logger.success(InputFile_Path + "-->" + Final_Out_file_name)
                 if not os.path.exists(Final_Out_file_name):
                     if copy:  # 复制模式
-                        if not copy_file(InputFile_Path, outputfile_path):
+                        if not is_used(InputFile_Path):
+                            if not copy_file(InputFile_Path, outputfile_path):
+                                continue
+                        else:
                             continue
                     else:
-                        if is_used(InputFile_Path):
+                        if not is_used(InputFile_Path):
                             if not move_file(InputFile_Path, outputfile_path):
                                 continue
                         else:
                             continue
                     rename_file(Out_dir_Original_File_Name, Final_Out_file_name)
+                    logger.success(InputFile_Path+"-->"+Final_Out_file_name)
+                elif os.path.exists(Final_Out_file_name) and not copy:
+                    del_file(Final_Out_file_name)
 
 
 if __name__ == "__main__":
